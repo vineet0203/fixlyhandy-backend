@@ -190,7 +190,7 @@ class Quote extends BaseModel
 
         $total = $this->items->sum(function ($item) {
             $subtotal = $item->quantity * $item->unit_price;
-            $tax = $subtotal * ($item->tax_rate / 100);
+            $tax = $this->is_tax_applicable ? $subtotal * ($item->tax_rate / 100) : 0;
             return $subtotal + $tax;
         });
 

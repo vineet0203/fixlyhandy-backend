@@ -42,7 +42,7 @@ class UpdateQuoteRequest extends FormRequest
             // Section 3: Pricing Summary
             'discount' => 'nullable|numeric|min:0',
             'is_tax_applicable' => 'sometimes|boolean',
-            'tax_percentage' => 'required_if:is_tax_applicable,true|integer|in:0,5,12,18,28',
+            'tax_percentage' => 'required_if:is_tax_applicable,true|integer|between:0,100',
             'deposit_required' => 'sometimes|boolean',
             'deposit_type' => 'nullable|in:none,percentage,fixed',
             'deposit_amount' => 'required_if:deposit_required,true|numeric|min:0',
@@ -93,7 +93,7 @@ class UpdateQuoteRequest extends FormRequest
             'line_items.*.tax_rate.between' => 'Tax rate must be between 0 and 100.',
             'discount.min' => 'Discount cannot be negative.',
             'tax_percentage.required_if' => 'Tax percentage is required when tax is applicable.',
-            'tax_percentage.in' => 'Tax percentage must be one of 0, 5, 12, 18, or 28.',
+            'tax_percentage.between' => 'Tax percentage must be between 0 and 100.',
             'deposit_type.required_if' => 'Deposit type is required when deposit is required.',
             'deposit_type.in' => 'Deposit type must be percentage or fixed.',
             'deposit_amount.required_if' => 'Deposit amount is required when deposit is required.',

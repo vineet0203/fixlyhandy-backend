@@ -76,10 +76,12 @@ class QuoteUpdateService
             // Update items if provided - check both 'items' and 'line_items'
             if (isset($data['items'])) {
                 $this->updateQuoteItems($quote, $data['items']);
+                $quote->unsetRelation('items');
                 // Recalculate totals after items update
                 $quote->calculateTotals();
             } elseif (isset($data['line_items'])) {
                 $this->updateQuoteItems($quote, $data['line_items']);
+                $quote->unsetRelation('items');
                 $quote->calculateTotals();
             }
 
