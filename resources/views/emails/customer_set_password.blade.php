@@ -13,7 +13,7 @@
         <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 0 10px rgba(0,0,0,0.05);">
           <tr>
             <td align="center" style="padding:20px; background-color:#0f766e;">
-              <span style="display:inline-block; font-size:28px; line-height:1; font-weight:700; color:#ffffff; letter-spacing:0.5px;">TrackJobs</span>
+              <span style="display:inline-block; font-size:28px; line-height:1; font-weight:700; color:#ffffff; letter-spacing:0.5px;">FixlyHandy</span>
             </td>
           </tr>
 

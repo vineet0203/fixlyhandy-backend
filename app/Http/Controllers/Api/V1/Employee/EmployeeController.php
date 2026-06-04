@@ -86,7 +86,7 @@ class EmployeeController extends BaseController
                     'resetUrl' => $setupLink,
                 ], function ($message) use ($employee) {
                     $message->to($employee->email)
-                        ->subject('Set your password - ' . config('app.name', 'TrackJobs'));
+                        ->subject('Set your password - ' . config('app.name', 'FixlyHandy'));
                 });
             } catch (\Throwable $mailException) {
                 $emailSent = false;

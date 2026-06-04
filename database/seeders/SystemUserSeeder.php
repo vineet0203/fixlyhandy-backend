@@ -11,7 +11,7 @@ class SystemUserSeeder extends Seeder
     public function run()
     {
         User::updateOrCreate(
-            ['email' => 'system@trakjobs.local'],
+            ['email' => 'system@fixlyhandy.local'],
             [
                 'password'   => Hash::make(str()->random(32)),
                 'is_active'  => true,

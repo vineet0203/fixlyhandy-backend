@@ -19,7 +19,7 @@ class OnboardingFormMail extends Mailable
     public function __construct(AssignedDocument $assignment)
     {
         $this->assignment = $assignment;
-        $this->formUrl = config('app.customer_frontend_url', env('CUSTOMER_FRONTEND_URL', 'https://customer.trakjobs.com'))
+        $this->formUrl = config('app.customer_frontend_url', env('CUSTOMER_FRONTEND_URL', 'https://customer.fixlyhandy.com'))
             . '/fill-form/' . $assignment->token;
     }
 

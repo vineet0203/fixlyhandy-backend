@@ -277,7 +277,7 @@ class QuoteUpdateService
                     ]);
 
                     // Send email notification
-                    $loginUrl = rtrim((string) config('app.customer_frontend_url', 'https://customer.trakjobs.com'), '/') . '/login';
+                    $loginUrl = rtrim((string) config('app.customer_frontend_url', 'https://customer.fixlyhandy.com'), '/') . '/login';
                     \Illuminate\Support\Facades\Mail::send('emails.quote_notification', [
                         'title' => 'Quotation Updated',
                         'greeting' => 'Hello ' . ($customer->name ?: 'Customer') . ',',
@@ -289,7 +289,7 @@ class QuoteUpdateService
                         'loginUrl' => $loginUrl,
                     ], function ($message) use ($customer, $fresh) {
                         $message->to($customer->email)
-                            ->subject('Updated Quotation #' . $fresh->quote_number . ' - ' . config('app.name', 'TrackJobs'));
+                            ->subject('Updated Quotation #' . $fresh->quote_number . ' - ' . config('app.name', 'FixlyHandy'));
                     });
 
                     Log::info('Quote update email notification sent to customer', [

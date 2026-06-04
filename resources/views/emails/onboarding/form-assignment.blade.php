@@ -23,7 +23,7 @@
     <div class="container">
         <div class="card">
             <div class="logo">
-                <h1>TRAKJOBS</h1>
+                <h1>FIXLYHANDY</h1>
             </div>
 
             <p class="greeting">Hello {{ $assignment->employee_name }},</p>
@@ -55,7 +55,7 @@
         </div>
 
         <div class="footer">
-            &copy; {{ date('Y') }} TRAKJOBS. All rights reserved.
+            &copy; {{ date('Y') }} FIXLYHANDY. All rights reserved.
         </div>
     </div>
 </body>

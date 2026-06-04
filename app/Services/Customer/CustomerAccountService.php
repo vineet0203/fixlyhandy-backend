@@ -71,7 +71,7 @@ class CustomerAccountService
                 'resetUrl' => $setupLink,
             ], function ($message) use ($customer) {
                 $message->to($customer->email)
-                    ->subject('Set your password - ' . config('app.name', 'TrackJobs'));
+                    ->subject('Set your password - ' . config('app.name', 'FixlyHandy'));
             });
 
             Log::info('Customer first-time password setup link sent.', [
@@ -179,7 +179,7 @@ class CustomerAccountService
 
     private function buildSetPasswordLink(string $token, string $email): string
     {
-        $frontendUrl = rtrim((string) config('app.customer_frontend_url', 'https://customer.trakjobs.com'), '/');
+        $frontendUrl = rtrim((string) config('app.customer_frontend_url', 'https://customer.fixlyhandy.com'), '/');
 
         $parsedHost = parse_url($frontendUrl, PHP_URL_HOST);
         $isLocalHost = in_array($parsedHost, ['localhost', '127.0.0.1'], true);
@@ -187,7 +187,7 @@ class CustomerAccountService
         // Keep localhost over http for local development; enforce https for non-local environments.
         $baseUrl = $isLocalHost
             ? $frontendUrl
-            : (preg_replace('/^http:\/\//i', 'https://', $frontendUrl) ?: 'https://customer.trakjobs.com');
+            : (preg_replace('/^http:\/\//i', 'https://', $frontendUrl) ?: 'https://customer.fixlyhandy.com');
 
         return $baseUrl
             . '/set-password?email=' . urlencode($email)

@@ -1,10 +1,8 @@
 /vendor/
 node_modules/
 .env
+.env.*
 .phpunit.result.cache
-/storage/*.key
-/storage/oauth-private.key
-/storage/oauth-public.key
 /storage/logs/*
 /storage/framework/cache/*
 /storage/framework/sessions/*
@@ -16,11 +14,9 @@ node_modules/
 *.log
 .DS_Store
 Thumbs.db
-.env.*
 /public/hot
-
-# Temp/Backup files
+/public/storage
 *.bak
 *.tmp
+/public/build/
 deploy.sh
-[

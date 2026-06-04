@@ -12,4 +12,4 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: bash /var/www/Trakjobs-backend/deploy.sh
+          script: bash /var/www/FixlyHandy-backend/deploy.sh

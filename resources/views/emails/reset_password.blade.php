@@ -18,7 +18,7 @@
           <!-- Header -->
           <tr>
             <td align="center" style="padding:20px; background-color:#0f766e;">
-              <span style="display:inline-block; font-size:28px; line-height:1; font-weight:700; color:#ffffff; letter-spacing:0.5px;">TrackJobs</span>
+              <span style="display:inline-block; font-size:28px; line-height:1; font-weight:700; color:#ffffff; letter-spacing:0.5px;">FixlyHandy</span>
             </td>
           </tr>
 

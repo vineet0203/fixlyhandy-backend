@@ -67,7 +67,7 @@ class TelegramService
             $commitId = substr($data['commit']['id'], 0, 8);
         }
         
-        $commitUrl = "https://github.com/rajpootsourabh/trackjobs-backend/commit/{$commitId}";
+        $commitUrl = "https://github.com/rajpootsourabh/fixlyhandy-backend/commit/{$commitId}";
         
         // Get commit message safely
         $commitMessage = isset($data['commit']['message']) ? $data['commit']['message'] : 'no message';
@@ -85,7 +85,7 @@ class TelegramService
         $timestamp = isset($data['timestamp']) ? $data['timestamp'] : date('Y-m-d H:i:s');
         
         $message = "<b>{$icon} DEPLOYMENT {$status}</b>\n\n";
-        $message .= "<b>Repository:</b> Trakjobs Backend\n";
+        $message .= "<b>Repository:</b> FixlyHandy Backend\n";
         $message .= "<b>Commit:</b> <a href=\"{$commitUrl}\">{$commitId}</a>\n";
         $message .= "<b>Message:</b> {$commitMessage}\n";
         $message .= "<b>Author:</b> {$author}\n";

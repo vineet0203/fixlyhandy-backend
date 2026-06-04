@@ -40,7 +40,7 @@ class EmployeeDeletionService
             }
 
             if (!empty($employee->email)) {
-                $employee->email = 'deleted+' . $employee->id . '+' . now()->timestamp . '@trakjobs.local';
+                $employee->email = 'deleted+' . $employee->id . '+' . now()->timestamp . '@fixlyhandy.local';
             }
 
             // Update audit fields

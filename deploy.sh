@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "🚀 Starting deployment..."
-cd /var/www/Trakjobs-backend
+cd /var/www/FixlyHandy-backend
 echo "📥 Pulling latest changes..."
 git fetch origin
 git reset --hard origin/main
@@ -15,7 +15,7 @@ php artisan view:cache
 php artisan optimize
 echo "🔒 Setting permissions..."
 chmod -R 755 storage bootstrap/cache
-chown -R www-data:www-data /var/www/Trakjobs-backend
+chown -R www-data:www-data /var/www/FixlyHandy-backend
 echo "🔄 Restarting services..."
 systemctl reload php8.5-fpm
 systemctl reload nginx

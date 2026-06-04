@@ -19,15 +19,15 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return response()->json([
         'success' => true,
-        'message' => 'TrakJobs API is running 🚀'
+        'message' => 'FixlyHandy API is running 🚀'
     ]);
     //return view('welcome');
 });
 
 Route::get('/test-mail', function () {
-    Mail::raw('This is a test email from TrackJobs.', function ($message) {
-        $message->to('trackjobsofficial@gmail.com')
-                ->subject('TrackJobs SMTP Test');
+    Mail::raw('This is a test email from FixlyHandy.', function ($message) {
+        $message->to('fixlyhandyofficial@gmail.com')
+                ->subject('FixlyHandy SMTP Test');
     });
     return 'Mail Sent Successfully';
 });

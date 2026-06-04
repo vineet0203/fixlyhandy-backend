@@ -285,7 +285,7 @@
                     <p class="footer-links" style="margin: 0;">
                         <a href="{{ config('app.url') }}/admin/settings" style="color: #6b7280; text-decoration: none; margin: 0 6px;">Admin Settings</a><span style="color: #6b7280;"> | </span>
                         <a href="{{ config('app.url') }}/admin/notifications" style="color: #6b7280; text-decoration: none; margin: 0 6px;">Notification Preferences</a><span style="color: #6b7280;"> | </span>
-                        <a href="mailto:{{ $supportEmail ?? 'admin@trackjobs.com' }}" style="color: #6b7280; text-decoration: none; margin: 0 6px;">Support</a>
+                        <a href="mailto:{{ $supportEmail ?? 'admin@fixlyhandy.com' }}" style="color: #6b7280; text-decoration: none; margin: 0 6px;">Support</a>
                     </p>
                 </td>
             </tr>
