@@ -2,6 +2,8 @@
 node_modules/
 .env
 .env.*
+!.env.example
+!.env.production.example
 .phpunit.result.cache
 /storage/logs/*
 /storage/framework/cache/*
