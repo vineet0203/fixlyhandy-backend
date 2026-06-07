@@ -30,6 +30,7 @@ use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\Reports\ReportsController;
 use App\Http\Controllers\Api\V1\AI\AIQuoteController;
 use App\Http\Controllers\Api\V1\PublicBookingController;
+use App\Http\Controllers\Api\V1\ServiceCategoryController;
 use App\Http\Controllers\Api\MessageController;
 use App\Services\RequestAnalyticsService;
 use Illuminate\Support\Facades\Route;
@@ -94,6 +95,8 @@ Route::prefix('public')->group(function () {
     Route::get('vendors', [PublicBookingController::class, 'getVendors']);
 });
 
+Route::get('service-categories', [ServiceCategoryController::class, 'index']);
+
 Route::post('/chat/auth', [MessageController::class, 'broadcastAuth']);
 
 Route::prefix('employee')->group(function () {
@@ -157,6 +160,14 @@ Route::middleware(['customer.jwt'])->prefix('customer')->group(function () {
 // PROTECTED ROUTES - REQUIRE AUTHENTICATION
 // ============================================
 Route::middleware(['jwt.verify'])->group(function () {
+
+    // Service Categories Admin Routes
+    Route::middleware(['role:platform_admin'])->prefix('admin/service-categories')->group(function () {
+        Route::post('/', [ServiceCategoryController::class, 'store']);
+        Route::put('/{id}', [ServiceCategoryController::class, 'update']);
+        Route::delete('/{id}', [ServiceCategoryController::class, 'destroy']);
+        Route::patch('/{id}/toggle', [ServiceCategoryController::class, 'toggle']);
+    });
 
     // Vendor Messaging routes
     Route::get('/messages/conversations', [MessageController::class, 'getConversations']);

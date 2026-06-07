@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             AdminUsersSeeder::class,
             PasswordSecuritySettingsSeeder::class,
             DocumentTemplateSeeder::class,
+            ServiceCategorySeeder::class,
         ]);
     }
 }
