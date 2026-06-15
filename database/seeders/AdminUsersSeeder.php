@@ -21,10 +21,10 @@ class AdminUsersSeeder extends Seeder
 
         $adminUsers = [
             [
-                'email' => 'rajpootsourabh1999@gmail.com',
+                'email' => 'admin@trakjobs.com',
                 'first_name' => 'Super',
                 'last_name' => 'Admin',
-                'password' => 'AdminPassword123!',
+                'password' => 'Admin@1234',
                 'description' => 'Primary super administrator',
             ]
         ];

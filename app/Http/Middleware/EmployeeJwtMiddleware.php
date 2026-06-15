@@ -49,6 +49,14 @@ class EmployeeJwtMiddleware
                 ], 403);
             }
 
+            if ($employee->vendor_id && optional($employee->vendor)->status !== 'active') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Your vendor account has been suspended.',
+                    'code' => 403,
+                ], 403);
+            }
+
             $request->attributes->set('employee', [
                 'id' => $employee->id,
                 'vendor_id' => $employee->vendor_id,

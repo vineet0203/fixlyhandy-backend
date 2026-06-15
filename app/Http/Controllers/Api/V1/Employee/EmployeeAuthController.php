@@ -44,6 +44,12 @@ class EmployeeAuthController extends BaseController
             return $this->forbiddenResponse('Employee account is inactive.');
         }
 
+        if ($employee->vendor_id) {
+            if ($employee->vendor && $employee->vendor->status !== 'active') {
+                return $this->forbiddenResponse('Your vendor account has been suspended.');
+            }
+        }
+
         $token = JWTAuth::claims([
             'vendor_id' => $employee->vendor_id,
             'scope' => 'employee',

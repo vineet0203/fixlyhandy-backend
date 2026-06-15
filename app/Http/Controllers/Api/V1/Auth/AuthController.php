@@ -30,9 +30,15 @@ class AuthController extends BaseController
     public function login(LoginRequest $request): JsonResponse
     {
         try {
-            $token = $this->authService->login($request->validated());
+            $result = $this->authService->login($request->validated());
 
-            return $this->successResponse($token, 'Login successful');
+            if (isset($result['force_password_change']) && $result['force_password_change']) {
+                return $this->successResponse($result, 'Password change required', 200);
+            }
+
+            return $this->successResponse($result, 'Login successful');
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+            return $this->errorResponse($e->getMessage(), $e->getStatusCode());
         } catch (\Exception $e) {
             Log::warning('Login failed', [
                 'email' => $request->email,

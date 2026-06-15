@@ -40,18 +40,6 @@ class AuthService
             throw new \Exception('Account is temporarily locked. Please try again later or contact administrator.');
         }
 
-        // Step 4: Check if user is active
-        if (!$user->is_active) {
-            throw new \Exception('Account is deactivated. Please contact administrator.');
-        }
-
-        // Step 5: Check if user is active
-        if ($user->vendor_id) {
-            if ($user->vendor->status !== 'active') {
-                throw new \Exception('Vendor account is not active');
-            }
-        }
-
         // Step 6: Attempt authentication
         $token = auth()->attempt($credentials);
 
@@ -84,6 +72,23 @@ class AuthService
             } else {
                 throw new \Exception('Invalid credentials. Account locked.');
             }
+        }
+
+        // Post-credentials check for suspended states and force password change
+        if (!$user->is_active) {
+            throw new \Symfony\Component\HttpKernel\Exception\HttpException(403, 'Your account has been suspended. Contact support.');
+        }
+
+        if ($user->vendor_id) {
+            if ($user->vendor->status !== 'active') {
+                throw new \Symfony\Component\HttpKernel\Exception\HttpException(403, 'Your vendor account has been suspended.');
+            }
+        }
+
+        if ($user->force_password_change) {
+            return [
+                'force_password_change' => true
+            ];
         }
 
         // Step 7: Login successful - reset failed attempts
