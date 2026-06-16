@@ -170,9 +170,30 @@ class JobCreationService
     {
         $quote = Quote::with(['client', 'items', 'client.vendor'])->findOrFail($quoteId);
 
+        // Auto-create client from quote if client_id is null
+        if (!$quote->client_id && $quote->client_email && $quote->vendor_id) {
+            $nameParts = explode(' ', $quote->client_name ?? '', 2);
+            $client = \App\Models\Client::firstOrCreate(
+                ['email' => $quote->client_email, 'vendor_id' => $quote->vendor_id],
+                [
+                    'first_name'         => $nameParts[0] ?? 'Unknown',
+                    'last_name'          => $nameParts[1] ?? '',
+                    'client_type'        => 'residential',
+                    'payment_term'       => 'due_on_receipt',
+                    'preferred_currency' => $quote->currency ?? 'USD',
+                    'is_tax_applicable'  => 0,
+                    'status'             => 'active',
+                    'created_by'         => $convertedBy,
+                    'updated_by'         => $convertedBy,
+                ]
+            );
+            $quote->update(['client_id' => $client->id]);
+            $quote->refresh();
+        }
+
         $user = auth()->user();
         if ($user && isset($user->vendor_id) && $user->vendor_id) {
-            if ($quote->client->vendor_id !== $user->vendor_id) {
+            if ($quote->client && $quote->client->vendor_id !== $user->vendor_id) {
                 throw new \Exception('Quote does not belong to your vendor account.');
             }
         }

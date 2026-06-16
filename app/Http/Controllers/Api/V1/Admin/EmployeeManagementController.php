@@ -128,7 +128,7 @@ class EmployeeManagementController extends BaseController
                 ]
             );
 
-            $employeeAppUrl = rtrim(env('EMPLOYEE_FRONTEND_URL', 'http://localhost:5174'), '/');
+            $employeeAppUrl = rtrim(config('app.employee_frontend_url', 'https://employee.trakjobs.com'), '/');
             $setupLink = $employeeAppUrl . '/set-password?email=' . urlencode($employee->email) . '&token=' . urlencode($plainToken);
 
             $emailSent = true;

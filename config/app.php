@@ -70,6 +70,7 @@ return [
     'frontend_url' => env('FRONTEND_URL', 'http://localhost:5173'),
     'frontend_password_reset_url' => env('FRONTEND_PASSWORD_RESET_URL', null),
     'customer_frontend_url' => env('CUSTOMER_FRONTEND_URL', 'https://customer.trakjobs.com'),
+    'employee_frontend_url' => env('EMPLOYEE_FRONTEND_URL', 'https://employee.trakjobs.com'),
 
     /*
     |--------------------------------------------------------------------------
