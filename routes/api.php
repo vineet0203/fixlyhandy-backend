@@ -209,6 +209,18 @@ Route::middleware(['jwt.verify'])->group(function () {
         Route::patch('/{id}/customers/{uid}/toggle-status', [\App\Http\Controllers\Api\V1\Admin\VendorManagementController::class, 'toggleCustomerStatus']);
     });
 
+    // Global Employee Management Admin Routes
+    Route::middleware(['role:platform_admin'])->prefix('admin/employees')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\V1\Admin\EmployeeManagementController::class, 'index']);
+        Route::post('/', [\App\Http\Controllers\Api\V1\Admin\EmployeeManagementController::class, 'store']);
+        Route::get('/{id}', [\App\Http\Controllers\Api\V1\Admin\EmployeeManagementController::class, 'show']);
+        Route::put('/{id}', [\App\Http\Controllers\Api\V1\Admin\EmployeeManagementController::class, 'update']);
+        Route::delete('/{id}', [\App\Http\Controllers\Api\V1\Admin\EmployeeManagementController::class, 'destroy']);
+        Route::patch('/{id}/toggle-status', [\App\Http\Controllers\Api\V1\Admin\EmployeeManagementController::class, 'toggleStatus']);
+        Route::patch('/{id}/reset-password', [\App\Http\Controllers\Api\V1\Admin\EmployeeManagementController::class, 'resetPassword']);
+        Route::get('/{id}/schedules', [\App\Http\Controllers\Api\V1\Admin\EmployeeManagementController::class, 'schedules']);
+    });
+
     // Vendor Messaging routes
     Route::get('/messages/conversations', [MessageController::class, 'getConversations']);
     Route::get('/messages/{customerId}', [MessageController::class, 'getMessages']);

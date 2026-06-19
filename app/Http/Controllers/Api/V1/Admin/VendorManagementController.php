@@ -191,7 +191,9 @@ class VendorManagementController extends BaseController
                 User::whereIn('id', $userIds)->update([
                     'is_active' => true,
                     'status' => 'active',
-                    'reactivated_at' => now()
+                    'reactivated_at' => now(),
+                    'failed_login_attempts' => 0,
+                    'account_locked_until' => null
                 ]);
             }
 
@@ -380,7 +382,7 @@ class VendorManagementController extends BaseController
                 ]
             );
 
-            $employeeAppUrl = rtrim(env('EMPLOYEE_FRONTEND_URL', 'http://localhost:5174'), '/');
+            $employeeAppUrl = rtrim(config('app.employee_frontend_url', 'https://employee.trakjobs.com'), '/');
             $setupLink = $employeeAppUrl . '/set-password?email=' . urlencode($employee->email) . '&token=' . urlencode($plainToken);
 
             $emailSent = true;
