@@ -243,8 +243,8 @@ class VendorManagementController extends BaseController
             $owner->save();
 
             // Send email
-            Mail::raw("Hello,\n\nAn administrator has manually reset your password for TrakJobs.\nYour new password is: {$newPassword}\n\nYou can log in directly using this new password.", function ($message) use ($owner) {
-                $message->to($owner->email)->subject('TrakJobs - Admin Password Reset');
+            Mail::raw("Hello,\n\nAn administrator has manually reset your password for FixlyHandy.\nYour new password is: {$newPassword}\n\nYou can log in directly using this new password.", function ($message) use ($owner) {
+                $message->to($owner->email)->subject('FixlyHandy - Admin Password Reset');
             });
 
             return $this->successResponse(null, 'Password updated successfully and email sent');
@@ -382,7 +382,7 @@ class VendorManagementController extends BaseController
                 ]
             );
 
-            $employeeAppUrl = rtrim(config('app.employee_frontend_url', 'https://employee.trakjobs.com'), '/');
+            $employeeAppUrl = rtrim(config('app.employee_frontend_url', 'https://employee.fixlyhandy.com'), '/');
             $setupLink = $employeeAppUrl . '/set-password?email=' . urlencode($employee->email) . '&token=' . urlencode($plainToken);
 
             $emailSent = true;
@@ -392,7 +392,7 @@ class VendorManagementController extends BaseController
                     'resetUrl' => $setupLink,
                 ], function ($message) use ($employee) {
                     $message->to($employee->email)
-                        ->subject('Set your password - ' . config('app.name', 'TrackJobs'));
+                        ->subject('Set your password - ' . config('app.name', 'FixlyHandy'));
                 });
             } catch (\Throwable $mailException) {
                 $emailSent = false;

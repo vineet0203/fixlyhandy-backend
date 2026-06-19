@@ -128,7 +128,7 @@ class EmployeeManagementController extends BaseController
                 ]
             );
 
-            $employeeAppUrl = rtrim(config('app.employee_frontend_url', 'https://employee.trakjobs.com'), '/');
+            $employeeAppUrl = rtrim(config('app.employee_frontend_url', 'https://employee.fixlyhandy.com'), '/');
             $setupLink = $employeeAppUrl . '/set-password?email=' . urlencode($employee->email) . '&token=' . urlencode($plainToken);
 
             $emailSent = true;
@@ -138,7 +138,7 @@ class EmployeeManagementController extends BaseController
                     'resetUrl' => $setupLink,
                 ], function ($message) use ($employee) {
                     $message->to($employee->email)
-                        ->subject('Set your password - ' . config('app.name', 'TrackJobs'));
+                        ->subject('Set your password - ' . config('app.name', 'FixlyHandy'));
                 });
             } catch (\Throwable $mailException) {
                 $emailSent = false;
@@ -266,8 +266,8 @@ class EmployeeManagementController extends BaseController
             ]);
 
             // Try to find if there is an associated user (or send directly to employee email)
-            Mail::raw("Hello,\n\nAn administrator has manually reset your password for TrakJobs Employee Portal.\nYour new password is: {$newPassword}\n\nYou can log in using this new password.", function ($message) use ($employee) {
-                $message->to($employee->email)->subject('TrakJobs - Admin Password Reset');
+            Mail::raw("Hello,\n\nAn administrator has manually reset your password for FixlyHandy Employee Portal.\nYour new password is: {$newPassword}\n\nYou can log in using this new password.", function ($message) use ($employee) {
+                $message->to($employee->email)->subject('FixlyHandy - Admin Password Reset');
             });
 
             return $this->successResponse(null, 'Employee password updated successfully and email sent');
