@@ -223,6 +223,11 @@ class Job extends BaseModel
         return $this->hasMany(Schedule::class);
     }
 
+    public function timeEntries()
+    {
+        return $this->hasMany(TimeEntry::class);
+    }
+
     public function dispatchSchedules()
     {
         return $this->hasMany(Schedule::class);

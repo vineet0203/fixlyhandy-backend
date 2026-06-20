@@ -332,6 +332,10 @@ class TimeTrackingController extends BaseController
             return $this->notFoundResponse('Time entry not found.');
         }
 
+        if ($entry->status === 'approved') {
+            return $this->errorResponse('Approved time entries cannot be edited.', 422);
+        }
+
         $startTime = Carbon::parse($request->start_time);
         $endTime = Carbon::parse($request->end_time);
 
@@ -366,6 +370,10 @@ class TimeTrackingController extends BaseController
         $entry->check_out = $endTime;
         $entry->total_time = $workedSeconds;
         $entry->status = 'pending';
+        $entry->approved_by = null;
+        $entry->approved_at = null;
+        $entry->rejected_by = null;
+        $entry->rejected_at = null;
         $entry->save();
         $entry->load('job:id,title,job_number');
 

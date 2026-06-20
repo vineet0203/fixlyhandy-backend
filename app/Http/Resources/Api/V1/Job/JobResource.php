@@ -117,6 +117,20 @@ class JobResource extends JsonResource
                 'general' => JobAttachmentResource::collection($generalAttachments),
                 'instructions' => JobAttachmentResource::collection($instructionAttachments),
             ],
+            'time_entries' => $this->whenLoaded('timeEntries', function () {
+                return $this->timeEntries->map(fn($entry) => [
+                    'id' => $entry->id,
+                    'check_in' => $entry->check_in?->toIso8601String(),
+                    'check_out' => $entry->check_out?->toIso8601String(),
+                    'total_time' => $entry->total_time,
+                    'status' => $entry->status,
+                    'approved_by_name' => $entry->approver ? trim($entry->approver->first_name . ' ' . $entry->approver->last_name) : null,
+                    'approved_at' => $entry->approved_at?->toIso8601String(),
+                    'rejected_by_name' => $entry->rejector ? trim($entry->rejector->first_name . ' ' . $entry->rejector->last_name) : null,
+                    'rejected_at' => $entry->rejected_at?->toIso8601String(),
+                    'employee_name' => $entry->employee ? trim($entry->employee->first_name . ' ' . $entry->employee->last_name) : null,
+                ]);
+            }, []),
             // 'activities' => $this->whenLoaded('activities', function () {
             //     return JobActivityResource::collection($this->activities);
             // }, []),
