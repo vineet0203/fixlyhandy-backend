@@ -19,6 +19,12 @@ class RegisterRequest extends FormRequest
             'business_name' => 'required|string|max:191|unique:vendors,business_name',
             'website_name' => 'required|string|url|max:191',
             'business_type' => 'required|string|in:commercial,residential',
+            'address_line1' => 'nullable|string|max:191',
+            'address_line2' => 'nullable|string|max:191',
+            'city' => 'nullable|string|max:191',
+            'state' => 'nullable|string|max:191',
+            'zip_code' => 'nullable|string|max:20',
+            'country' => 'nullable|string|max:191',
 
             // Services
             'service_category' => 'required|string|max:191',
