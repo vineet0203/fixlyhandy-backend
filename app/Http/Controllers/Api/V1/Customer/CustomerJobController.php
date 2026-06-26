@@ -18,7 +18,10 @@ class CustomerJobController extends BaseController
                 'quote',
                 'client',
                 'tasks',
-                'attachments'
+                'attachments',
+                'timeEntries.employee',
+                'timeEntries.approver',
+                'timeEntries.rejector',
             ])
             ->where(function ($query) use ($customer) {
                 $query->where('customer_id', $customer->id)
@@ -67,7 +70,10 @@ class CustomerJobController extends BaseController
                 'attachments',
                 'schedules',
                 'assignedTo',
-                'assignments.employee'
+                'assignments.employee',
+                'timeEntries.employee',
+                'timeEntries.approver',
+                'timeEntries.rejector',
             ])
             ->where('id', $id)
             ->where(function ($query) use ($customer) {

@@ -120,6 +120,10 @@ class VendorTimeEntryController extends BaseController
             return $this->conflictErrorResponse('Only pending time entries can be approved.');
         }
 
+        if (is_null($entry->check_out)) {
+            return $this->conflictErrorResponse('Cannot approve an active/unfinished time entry.');
+        }
+
         $actor = auth()->user();
 
         $entry->status = 'approved';
@@ -150,6 +154,10 @@ class VendorTimeEntryController extends BaseController
 
         if ($entry->status !== 'pending') {
             return $this->conflictErrorResponse('Only pending time entries can be rejected.');
+        }
+
+        if (is_null($entry->check_out)) {
+            return $this->conflictErrorResponse('Cannot reject an active/unfinished time entry.');
         }
 
         $actor = auth()->user();

@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
+use Illuminate\Support\Facades\Mail;
+
 class EmployeeAuthController extends BaseController
 {
     public function login(Request $request): JsonResponse
@@ -99,13 +101,22 @@ class EmployeeAuthController extends BaseController
             ]
         );
 
-        Log::info('Employee password reset token generated', [
-            'email' => $employee->email,
-            'token' => $token,
-            'expires_at' => $expiresAt->toISOString(),
-        ]);
+        $resetUrl = 'https://employee.trakjobs.com/reset-password?token=' . urlencode($token);
 
-        Log::info('Employee Reset Token: ' . $token);
+        try {
+            Mail::send('emails.reset_password', [
+                'name' => $employee->name ?: trim(($employee->first_name ?? '') . ' ' . ($employee->last_name ?? '')) ?: 'Employee',
+                'resetUrl' => $resetUrl,
+            ], function ($message) use ($employee) {
+                $message->to($employee->email)
+                    ->subject('Reset your password - ' . config('app.name', 'TrackJobs'));
+            });
+        } catch (\Throwable $exception) {
+            Log::error('Employee reset password email failed to send.', [
+                'email' => $employee->email,
+                'error' => $exception->getMessage(),
+            ]);
+        }
 
         return $this->successResponse(['token' => $token], 'Password reset token generated successfully.');
     }

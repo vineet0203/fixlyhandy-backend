@@ -11,9 +11,92 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+use App\Http\Requests\Api\V1\Customers\CustomerForgotPasswordRequest;
+use App\Http\Requests\Api\V1\Customers\CustomerResetPasswordRequest;
+use App\Models\Customer;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
+
 class CustomerAuthController extends BaseController
 {
     public function __construct(private CustomerAccountService $customerAccountService) {}
+
+    public function forgotPassword(CustomerForgotPasswordRequest $request): JsonResponse
+    {
+        $validated = $request->validated();
+        $customer = Customer::where('email', $validated['email'])->first();
+
+        if (!$customer) {
+            return $this->notFoundResponse('Customer not found.');
+        }
+
+        $token = bin2hex(random_bytes(32));
+        $expiresAt = now()->addMinutes(30);
+
+        DB::table('password_resets')->updateOrInsert(
+            ['email' => $customer->email],
+            [
+                'token' => $token,
+                'expires_at' => $expiresAt,
+                'updated_at' => now(),
+                'created_at' => now(),
+            ]
+        );
+
+        $resetUrl = 'https://customer.trakjobs.com/reset-password?token=' . urlencode($token);
+
+        try {
+            Mail::send('emails.reset_password', [
+                'name' => $customer->name ?: 'Customer',
+                'resetUrl' => $resetUrl,
+            ], function ($message) use ($customer) {
+                $message->to($customer->email)
+                    ->subject('Reset your password - ' . config('app.name', 'TrackJobs'));
+            });
+        } catch (\Throwable $exception) {
+            Log::error('Customer reset password email failed to send.', [
+                'email' => $customer->email,
+                'error' => $exception->getMessage(),
+            ]);
+        }
+
+        return $this->successResponse(['token' => $token], 'Password reset token generated successfully.');
+    }
+
+    public function resetPassword(CustomerResetPasswordRequest $request): JsonResponse
+    {
+        $validated = $request->validated();
+
+        $resetRow = DB::table('password_resets')
+            ->where('token', $validated['token'])
+            ->first();
+
+        if (!$resetRow) {
+            return $this->errorResponse('Invalid reset token.', 400);
+        }
+
+        if (now()->greaterThan(Carbon::parse($resetRow->expires_at))) {
+            DB::table('password_resets')->where('token', $validated['token'])->delete();
+            return $this->errorResponse('Reset token has expired.', 400);
+        }
+
+        $customer = Customer::where('email', $resetRow->email)->first();
+
+        if (!$customer) {
+            DB::table('password_resets')->where('token', $validated['token'])->delete();
+            return $this->notFoundResponse('Customer not found for reset token.');
+        }
+
+        $customer->password = Hash::make($validated['password']);
+        $customer->save();
+
+        DB::table('password_resets')->where('token', $validated['token'])->delete();
+
+        return $this->successResponse(null, 'Password reset successful.');
+    }
 
     public function login(CustomerLoginRequest $request): JsonResponse
     {

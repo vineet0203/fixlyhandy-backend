@@ -11,6 +11,7 @@ use App\Models\Customer;
 use App\Models\Client;
 use App\Models\Quote;
 use App\Models\Job;
+use App\Models\Invoice;
 use App\Services\Auth\PasswordService;
 use App\Services\Employee\EmployeeCreationService;
 use App\Services\Employee\EmployeeUpdateService;
@@ -91,6 +92,14 @@ class VendorManagementController extends BaseController
         $owner = User::find($vendor->user_id);
         $vendor->owner = $owner;
 
+        $category = \App\Models\ServiceCategory::where('slug', $vendor->service_category)->first();
+        $vendor->service_category_slug = $vendor->service_category;
+        $vendor->service_category = $category ? $category->name : $vendor->service_category;
+
+        $subCategory = \App\Models\ServiceSubCategory::where('slug', $vendor->service_sub_category)->first();
+        $vendor->service_sub_category_slug = $vendor->service_sub_category;
+        $vendor->service_sub_category = $subCategory ? $subCategory->name : $vendor->service_sub_category;
+
         // Get stats
         $vendor->employee_count = Employee::where('vendor_id', $vendor->id)->count();
 
@@ -98,6 +107,45 @@ class VendorManagementController extends BaseController
         $quoteEmails = Quote::where('vendor_id', $vendor->id)->whereNotNull('customer_id')->with('customer')->get()->pluck('customer.email');
         $jobEmails = Job::where('vendor_id', $vendor->id)->whereNotNull('customer_id')->with('customer')->get()->pluck('customer.email');
         $vendor->customer_count = $clientEmails->merge($quoteEmails)->merge($jobEmails)->filter()->unique()->count();
+
+        // Calculate and embed Dashboard stats
+        $vendor->total_jobs = Job::where('vendor_id', $vendor->id)->count();
+        $vendor->completed_jobs = Job::where('vendor_id', $vendor->id)->where('status', 'completed')->count();
+        $vendor->upcoming_jobs = Job::where('vendor_id', $vendor->id)->whereIn('status', ['pending', 'scheduled'])->count();
+        $vendor->total_earnings = (float) Job::where('vendor_id', $vendor->id)->sum('paid_amount');
+        $vendor->pending_payments = (float) Job::where('vendor_id', $vendor->id)->sum('balance_due');
+        
+        $vendor->pending_invoices_count = Invoice::whereHas('items.job', function($q) use ($vendor) {
+            $q->where('vendor_id', $vendor->id);
+        })->where('status', '!=', 'paid')->count();
+
+        // Job Schedule (This Week / Upcoming)
+        $vendor->job_schedule = Job::where('vendor_id', $vendor->id)
+            ->whereIn('status', ['pending', 'scheduled'])
+            ->with(['assignments.employee', 'customer', 'client'])
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        // Past Jobs (Completed)
+        $vendor->past_jobs = Job::where('vendor_id', $vendor->id)
+            ->where('status', 'completed')
+            ->latest()
+            ->with(['assignments.employee', 'customer', 'client'])
+            ->limit(10)
+            ->get();
+
+        // Earnings Summary
+        $vendor->earnings_summary = [
+            'total_earnings' => (float) Job::where('vendor_id', $vendor->id)->sum('paid_amount'),
+            'paid_amount' => (float) Job::where('vendor_id', $vendor->id)->sum('paid_amount'),
+            'pending_amount' => (float) Job::where('vendor_id', $vendor->id)->sum('balance_due'),
+            'this_month' => [
+                'total_earnings' => (float) Job::where('vendor_id', $vendor->id)->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->sum('paid_amount'),
+                'paid_amount' => (float) Job::where('vendor_id', $vendor->id)->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->sum('paid_amount'),
+                'pending_amount' => (float) Job::where('vendor_id', $vendor->id)->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->sum('balance_due'),
+            ]
+        ];
 
         return $this->successResponse($vendor, 'Vendor details retrieved successfully');
     }

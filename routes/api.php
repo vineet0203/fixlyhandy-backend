@@ -112,6 +112,8 @@ Route::prefix('employee')->group(function () {
 Route::prefix('customer')->group(function () {
     Route::post('login', [CustomerAuthController::class, 'login']);
     Route::post('set-password', [CustomerAuthController::class, 'setPassword']);
+    Route::post('forgot-password', [CustomerAuthController::class, 'forgotPassword']);
+    Route::post('reset-password', [CustomerAuthController::class, 'resetPassword']);
 });
 
 Route::middleware(['employee.jwt'])->prefix('employee')->group(function () {
@@ -219,6 +221,11 @@ Route::middleware(['jwt.verify'])->group(function () {
         Route::patch('/{id}/toggle-status', [\App\Http\Controllers\Api\V1\Admin\EmployeeManagementController::class, 'toggleStatus']);
         Route::patch('/{id}/reset-password', [\App\Http\Controllers\Api\V1\Admin\EmployeeManagementController::class, 'resetPassword']);
         Route::get('/{id}/schedules', [\App\Http\Controllers\Api\V1\Admin\EmployeeManagementController::class, 'schedules']);
+    });
+
+    // Global Customer Management Admin Routes
+    Route::middleware(['role:platform_admin'])->prefix('admin/customers')->group(function () {
+        Route::patch('/{id}/reset-password', [\App\Http\Controllers\Api\V1\Admin\CustomerManagementController::class, 'resetPassword']);
     });
 
     // Vendor Messaging routes
