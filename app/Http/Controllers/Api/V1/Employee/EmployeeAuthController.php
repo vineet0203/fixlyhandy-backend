@@ -101,7 +101,7 @@ class EmployeeAuthController extends BaseController
             ]
         );
 
-        $resetUrl = 'https://employee.trakjobs.com/reset-password?token=' . urlencode($token);
+        $resetUrl = 'https://employee.fixlyhandy.com/reset-password?token=' . urlencode($token);
 
         try {
             Mail::send('emails.reset_password', [
@@ -109,7 +109,7 @@ class EmployeeAuthController extends BaseController
                 'resetUrl' => $resetUrl,
             ], function ($message) use ($employee) {
                 $message->to($employee->email)
-                    ->subject('Reset your password - ' . config('app.name', 'TrackJobs'));
+                    ->subject('Reset your password - ' . config('app.name', 'FixlyHandy'));
             });
         } catch (\Throwable $exception) {
             Log::error('Employee reset password email failed to send.', [

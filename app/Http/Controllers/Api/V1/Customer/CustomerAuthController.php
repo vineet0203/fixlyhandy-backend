@@ -46,7 +46,7 @@ class CustomerAuthController extends BaseController
             ]
         );
 
-        $resetUrl = 'https://customer.trakjobs.com/reset-password?token=' . urlencode($token);
+        $resetUrl = 'https://customer.fixlyhandy.com/reset-password?token=' . urlencode($token);
 
         try {
             Mail::send('emails.reset_password', [
@@ -54,7 +54,7 @@ class CustomerAuthController extends BaseController
                 'resetUrl' => $resetUrl,
             ], function ($message) use ($customer) {
                 $message->to($customer->email)
-                    ->subject('Reset your password - ' . config('app.name', 'TrackJobs'));
+                    ->subject('Reset your password - ' . config('app.name', 'FixlyHandy'));
             });
         } catch (\Throwable $exception) {
             Log::error('Customer reset password email failed to send.', [
