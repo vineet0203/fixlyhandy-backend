@@ -86,7 +86,7 @@ class QuoteObserver
             // Create work order from quote
             $job = $this->jobService->convertFromQuote(
                 $quote->id,
-                $quote->updated_by ?? $quote->created_by ?? 1 // Fallback to system user
+                $quote->updated_by ?? $quote->created_by ?? null // Fallback to null
             );
 
             Log::info('Successfully auto-converted quote to work order', [

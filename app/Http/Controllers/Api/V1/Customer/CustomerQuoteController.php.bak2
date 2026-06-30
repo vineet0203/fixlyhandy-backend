@@ -11,7 +11,6 @@ use App\Models\Customer;
 use App\Models\Quote;
 use App\Models\CustomerNotification;
 use Illuminate\Http\JsonResponse;
-use App\Services\Jobs\JobCreationService;
 
 class CustomerQuoteController extends BaseController
 {
@@ -79,19 +78,6 @@ class CustomerQuoteController extends BaseController
         // Prevent updated_by FK violation for customer users
         $quote->updated_by = null;
         $quote->saveQuietly();
-
-        // Auto-convert approved quote to job
-        if ($action === 'accepted' && !$quote->is_converted && $quote->can_convert_to_job) {
-            try {
-                $jobService = app(JobCreationService::class);
-                $jobService->convertFromQuote($quote->id, $quote->vendor_id ?? 1);
-            } catch (\Exception $jobEx) {
-                \Illuminate\Support\Facades\Log::error('Auto job conversion failed', [
-                    'quote_id' => $quote->id,
-                    'error' => $jobEx->getMessage()
-                ]);
-            }
-        }
 
         return response()->json([
             'success' => true,
