@@ -21,6 +21,11 @@ class Customer extends Model implements JWTSubject
         'status',
         'profile_photo',
         'email_verified_at',
+        'google_id',
+        'whatsapp_number',
+        'is_verified',
+        'verification_method',
+        'whatsapp_verified_at',
     ];
 
     protected $hidden = [
@@ -29,6 +34,8 @@ class Customer extends Model implements JWTSubject
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'whatsapp_verified_at' => 'datetime',
+        'is_verified' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

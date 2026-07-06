@@ -68,6 +68,11 @@ class EmployeeAuthController extends BaseController
                 'vendor_id' => $employee->vendor_id,
                 'name' => $employee->name ?: trim(($employee->first_name ?? '') . ' ' . ($employee->last_name ?? '')),
                 'email' => $employee->email,
+                'is_verified' => (int) $employee->is_verified,
+                'google_id' => $employee->google_id,
+                'whatsapp_number' => $employee->whatsapp_number,
+                'whatsapp_verified_at' => $employee->whatsapp_verified_at?->toIso8601String(),
+                'verification_method' => $employee->verification_method,
             ],
         ], 'Employee login successful.');
     }

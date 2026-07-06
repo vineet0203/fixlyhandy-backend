@@ -28,6 +28,11 @@ class AuthUserResource extends JsonResource
             'email_verified_at' => $this->email_verified_at?->toISOString(),
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
+            'is_verified' => (int) $this->is_verified,
+            'google_id' => $this->google_id,
+            'whatsapp_number' => $this->whatsapp_number,
+            'verification_method' => $this->verification_method,
+            'whatsapp_verified_at' => $this->whatsapp_verified_at?->toISOString(),
 
             // Vendor association
             'vendor_id' => $this->vendor_id,

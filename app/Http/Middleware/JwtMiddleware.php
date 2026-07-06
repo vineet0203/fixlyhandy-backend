@@ -57,9 +57,10 @@ class JwtMiddleware
                 'error_code' => 'AUTH_TOKEN_EXPIRED'
             ], 401);
         } catch (TokenInvalidException $e) {
+            \Illuminate\Support\Facades\Log::error('JWT Invalid Token Exception: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Authentication failed. The provided access token is invalid or could not be verified.',
+                'message' => 'Authentication failed. The provided access token is invalid or could not be verified. ' . $e->getMessage(),
                 'timestamp' => now()->toISOString(),
                 'code' => 401,
                 'error_code' => 'AUTH_TOKEN_INVALID'

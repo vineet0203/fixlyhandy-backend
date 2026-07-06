@@ -53,6 +53,13 @@ class User extends Authenticatable implements JWTSubject
         // Audit fields
         'created_by',
         'updated_by',
+
+        // Verification
+        'google_id',
+        'whatsapp_number',
+        'is_verified',
+        'verification_method',
+        'whatsapp_verified_at',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -66,6 +73,7 @@ class User extends Authenticatable implements JWTSubject
         'account_locked_until' => 'datetime',
         'deactivated_at' => 'datetime',
         'reactivated_at' => 'datetime',
+        'whatsapp_verified_at' => 'datetime',
 
         // Booleans
         'is_active' => 'boolean',
@@ -74,6 +82,7 @@ class User extends Authenticatable implements JWTSubject
 
         // Integers
         'failed_login_attempts' => 'integer',
+        'is_verified' => 'integer',
 
         // JSON
         'security_settings' => 'array',

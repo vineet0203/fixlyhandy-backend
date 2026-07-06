@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Client\ClientController;
 use App\Http\Controllers\Api\V1\Client\ClientAvailabilityController; // NEW: Add this line
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\Auth\VerificationController;
 use App\Http\Controllers\Api\V1\Customer\CustomerAuthController;
 use App\Http\Controllers\Api\V1\Customer\CustomerNotificationController;
 use App\Http\Controllers\Api\V1\NotificationController;
@@ -87,6 +88,15 @@ Route::prefix('auth')->group(function () {
     Route::post('password/forgot', [AuthController::class, 'forgotPassword'])->name('auth.forgot-password');
     Route::post('password/reset', [AuthController::class, 'resetPassword'])->name('auth.reset-password');
     Route::post('password/verify-token', [AuthController::class, 'verifyResetToken'])->name('auth.verify-email');
+
+    // Verification & Universal Login Routes
+    Route::post('verify/google', [VerificationController::class, 'verifyGoogle']);
+    Route::post('verify/whatsapp/send', [VerificationController::class, 'sendWhatsappOtp']);
+    Route::post('verify/whatsapp/verify', [VerificationController::class, 'verifyWhatsappOtp']);
+    Route::post('verify/email/send', [VerificationController::class, 'sendEmailOtp']);
+    Route::post('verify/email/verify', [VerificationController::class, 'verifyEmailOtp']);
+    Route::post('login/google', [VerificationController::class, 'loginWithGoogle']);
+    Route::post('login/whatsapp', [VerificationController::class, 'loginWithWhatsapp']);
 });
 
 // ============================================

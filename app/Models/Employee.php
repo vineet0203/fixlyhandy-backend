@@ -34,7 +34,12 @@ class Employee extends BaseModel implements JWTSubject
         'profile_photo_path',
         'created_by',
         'updated_by',
-        'deleted_by'
+        'deleted_by',
+        'google_id',
+        'whatsapp_number',
+        'is_verified',
+        'verification_method',
+        'whatsapp_verified_at',
     ];
 
     protected $hidden = [
@@ -46,7 +51,9 @@ class Employee extends BaseModel implements JWTSubject
         'is_active' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'deleted_at' => 'datetime'
+        'deleted_at' => 'datetime',
+        'is_verified' => 'integer',
+        'whatsapp_verified_at' => 'datetime',
     ];
 
     /**
