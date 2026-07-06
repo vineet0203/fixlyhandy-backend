@@ -667,7 +667,7 @@ class VerificationController extends BaseController
         if ($entity instanceof User || $entity instanceof Customer) {
             $entity->email_verified_at = now();
         }
-        $entity->verification_method = $entity->google_id ? 'both' : 'email';
+        $entity->verification_method = $entity->google_id ? 'both' : 'gmail';
         $entity->save();
 
         if ($entity instanceof User) {
