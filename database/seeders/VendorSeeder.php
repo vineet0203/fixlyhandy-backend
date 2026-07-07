@@ -88,7 +88,7 @@ class VendorSeeder extends Seeder
                 'employee_id' => 'EMP' . rand(1000, 9999),
                 'first_name' => 'John',
                 'last_name' => 'Doe',
-                'email' => 'john.doe.' . $vendor->id . '@trakjobs.com',
+                'email' => 'john.doe.' . $vendor->id . '@fixlyhandy.com',
                 'phone' => '1234567890',
                 'mobile_number' => '1234567890',
                 'designation' => 'Technician',
