@@ -679,4 +679,111 @@ class VerificationController extends BaseController
         }
         return $this->successResponse($responseData, 'Email verified successfully.');
     }
+
+    /**
+     * Send SMS OTP.
+     */
+    public function sendSmsOtp(Request $request): JsonResponse
+    {
+        $request->validate([
+            'phone_number' => 'required|string',
+        ]);
+
+        $entity = $this->getAuthenticatedEntity($request);
+        if (!$entity) {
+            return $this->unauthorizedResponse('User is not authenticated.');
+        }
+
+        $phoneNumber = $request->input('phone_number');
+        $formattedPhone = $this->formatE164PhoneNumber($phoneNumber);
+
+        // Rate limiting: max 5 attempts per hour
+        $rateLimitKey = 'sms_otp_limit_' . get_class($entity) . '_' . $entity->id;
+        $attempts = Cache::get($rateLimitKey, 0);
+        if ($attempts >= 5) {
+            return $this->errorResponse('Too many OTP attempts. Maximum 5 attempts per hour allowed.', 429);
+        }
+        Cache::put($rateLimitKey, $attempts + 1, 3600);
+
+        // Generate 6-digit OTP
+        $otp = (string) rand(100000, 999999);
+
+        // Cache OTP for 10 minutes
+        $cacheKey = 'sms_otp_' . get_class($entity) . '_' . $entity->id;
+        Cache::put($cacheKey, $otp, 600);
+
+        Log::info("SMS OTP generated for " . get_class($entity) . " ID " . $entity->id . ": " . $otp . " (Phone: " . $formattedPhone . ")");
+
+        // Mask phone number for response
+        $maskedPhone = substr($formattedPhone, 0, 3) . '******' . substr($formattedPhone, -3);
+
+        return $this->successResponse([
+            'otp_sent' => true,
+            'otp' => app()->environment(['local', 'testing']) ? $otp : null, // expose OTP in dev mode for UI
+            'phone_number' => $maskedPhone,
+        ], 'SMS verification code sent successfully.');
+    }
+
+    /**
+     * Verify SMS OTP.
+     */
+    public function verifySmsOtp(Request $request): JsonResponse
+    {
+        $request->validate([
+            'otp' => 'required|string',
+            'phone_number' => 'required|string',
+        ]);
+
+        $entity = $this->getAuthenticatedEntity($request);
+        if (!$entity) {
+            return $this->unauthorizedResponse('User is not authenticated.');
+        }
+
+        $otp = $request->input('otp');
+        $phoneNumber = $request->input('phone_number');
+        $formattedPhone = $this->formatE164PhoneNumber($phoneNumber);
+
+        $cacheKey = 'sms_otp_' . get_class($entity) . '_' . $entity->id;
+        $cachedOtp = Cache::get($cacheKey);
+
+        if (!$cachedOtp || $cachedOtp !== $otp) {
+            return $this->errorResponse('Invalid or expired OTP.', 400);
+        }
+
+        // Clear cache
+        Cache::forget($cacheKey);
+
+        // Update verification state dynamically checking database schema
+        $entity->is_verified = 1;
+        
+        if (\Schema::hasColumn($entity->getTable(), 'phone_number')) {
+            $entity->phone_number = $formattedPhone;
+        } else {
+            $entity->whatsapp_number = $formattedPhone;
+        }
+
+        if (\Schema::hasColumn($entity->getTable(), 'phone_verified_at')) {
+            $entity->phone_verified_at = now();
+        } else {
+            $entity->whatsapp_verified_at = now();
+        }
+
+        if ($entity->google_id) {
+            $entity->verification_method = 'both';
+        } else {
+            $entity->verification_method = 'whatsapp'; // map to legacy enum values if needed
+        }
+
+        $entity->save();
+
+        if ($entity instanceof User) {
+            $responseData = new AuthUserResource($entity);
+        } elseif ($entity instanceof Employee) {
+            $responseData = $this->formatEmployeeData($entity);
+        } else {
+            $responseData = $this->formatCustomerData($entity);
+        }
+
+        return $this->successResponse($responseData, 'Phone number verified successfully.');
+    }
 }

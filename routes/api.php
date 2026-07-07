@@ -95,6 +95,8 @@ Route::prefix('auth')->group(function () {
     Route::post('verify/whatsapp/verify', [VerificationController::class, 'verifyWhatsappOtp']);
     Route::post('verify/email/send', [VerificationController::class, 'sendEmailOtp']);
     Route::post('verify/email/verify', [VerificationController::class, 'verifyEmailOtp']);
+    Route::post('verify/sms/send', [VerificationController::class, 'sendSmsOtp']);
+    Route::post('verify/sms/verify', [VerificationController::class, 'verifySmsOtp']);
     Route::post('login/google', [VerificationController::class, 'loginWithGoogle']);
     Route::post('login/whatsapp', [VerificationController::class, 'loginWithWhatsapp']);
 });
