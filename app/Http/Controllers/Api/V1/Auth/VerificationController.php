@@ -786,4 +786,109 @@ class VerificationController extends BaseController
 
         return $this->successResponse($responseData, 'Phone number verified successfully.');
     }
+
+    /**
+     * Verify Firebase SMS token.
+     */
+    public function verifyFirebaseSms(Request $request): JsonResponse
+    {
+        $request->validate([
+            'id_token' => 'required|string',
+        ]);
+
+        $entity = $this->getAuthenticatedEntity($request);
+        if (!$entity) {
+            return $this->unauthorizedResponse('User is not authenticated.');
+        }
+
+        $idToken = $request->input('id_token');
+        $firebaseData = $this->verifyFirebaseToken($idToken);
+
+        if (!$firebaseData) {
+            return $this->errorResponse('Invalid or expired Firebase ID token.', 400);
+        }
+
+        $phoneNumber = $firebaseData['phone_number'];
+        if (empty($phoneNumber)) {
+            return $this->errorResponse('No phone number associated with this token.', 400);
+        }
+
+        $formattedPhone = $this->formatE164PhoneNumber($phoneNumber);
+
+        // Update verification state dynamically checking database schema
+        $entity->is_verified = 1;
+        
+        if (\Schema::hasColumn($entity->getTable(), 'phone_number')) {
+            $entity->phone_number = $formattedPhone;
+        } else {
+            $entity->whatsapp_number = $formattedPhone;
+        }
+
+        if (\Schema::hasColumn($entity->getTable(), 'phone_verified_at')) {
+            $entity->phone_verified_at = now();
+        } else {
+            $entity->whatsapp_verified_at = now();
+        }
+
+        if ($entity->google_id) {
+            $entity->verification_method = 'both';
+        } else {
+            $entity->verification_method = 'whatsapp'; // map to legacy enum values if needed
+        }
+
+        if (\Schema::hasColumn($entity->getTable(), 'firebase_uid')) {
+            $entity->firebase_uid = $firebaseData['uid'];
+        }
+
+        $entity->save();
+
+        if ($entity instanceof User) {
+            $responseData = new AuthUserResource($entity);
+        } elseif ($entity instanceof Employee) {
+            $responseData = $this->formatEmployeeData($entity);
+        } else {
+            $responseData = $this->formatCustomerData($entity);
+        }
+
+        return $this->successResponse($responseData, 'Phone number verified successfully.');
+    }
+
+    /**
+     * Helper to verify Firebase ID token.
+     */
+    private function verifyFirebaseToken(string $idToken): ?array
+    {
+        // Simulated mock Firebase token for local development and testing
+        if (app()->environment(['local', 'testing']) && str_starts_with($idToken, 'mock_')) {
+            $phone = str_replace('mock_', '', $idToken);
+            return [
+                'uid' => 'mock_firebase_uid_' . md5($phone),
+                'phone_number' => $phone,
+            ];
+        }
+
+        try {
+            $credentials = env('FIREBASE_CREDENTIALS');
+            $factory = new \Kreait\Firebase\Factory();
+            
+            if (!empty($credentials)) {
+                if (str_starts_with(trim($credentials), '{')) {
+                    $factory = $factory->withServiceAccount(json_decode($credentials, true));
+                } else {
+                    $factory = $factory->withServiceAccount($credentials);
+                }
+            }
+
+            $auth = $factory->createAuth();
+            $verifiedIdToken = $auth->verifyIdToken($idToken);
+            
+            return [
+                'uid' => $verifiedIdToken->claims()->get('sub'),
+                'phone_number' => $verifiedIdToken->claims()->get('phone_number'),
+            ];
+        } catch (\Exception $e) {
+            Log::error('Firebase ID Token verification failed: ' . $e->getMessage());
+            return null;
+        }
+    }
 }

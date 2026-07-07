@@ -18,6 +18,7 @@ Route::middleware(['auth:api,customer.jwt,employee.jwt'])->group(function () {
     Route::post('auth/verify/email/verify', [VerificationController::class, 'verifyEmailOtp']);
     Route::post('auth/verify/sms/send', [VerificationController::class, 'sendSmsOtp']);
     Route::post('auth/verify/sms/verify', [VerificationController::class, 'verifySmsOtp']);
+    Route::post('auth/verify/firebase-sms/verify', [VerificationController::class, 'verifyFirebaseSms']);
     Route::post('auth/verify/google', [VerificationController::class, 'verifyGoogle']);
     Route::post('auth/verify/whatsapp/send', [VerificationController::class, 'sendWhatsappOtp']);
     Route::post('auth/verify/whatsapp/verify', [VerificationController::class, 'verifyWhatsappOtp']);
