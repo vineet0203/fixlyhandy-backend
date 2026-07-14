@@ -93,3 +93,4 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 # Run this in a separate terminal
 php artisan queue:work --queue=system_alerts,emails,notifications,default --tries=3
 
+# CI/CD Test
